@@ -27,6 +27,7 @@ exports.requireSignin = (req, res, next) => {
   }
   // pass the userId to the next middleware
   req.role = decodedToken.role;
+  console.log('decoded token', decodedToken);
   req.userId = decodedToken.userId;
   next();
 };
@@ -36,7 +37,6 @@ exports.userMiddleware = (req, res, next) => {
   if (req.role !== 'user') {
     return res.status(403).json({ message: 'User access denied!' });
   }
-
   next();
 };
 

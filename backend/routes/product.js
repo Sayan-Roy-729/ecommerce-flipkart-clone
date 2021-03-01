@@ -5,7 +5,7 @@ const shortid = require('shortid');
 
 // const categoryControllers = require('../controllers/category');
 const productController = require('../controllers/product');
-const authentication = require('../middlewares/isAauth');
+const authentication = require('../middlewares/isAuth');
 
 const router = express.Router();
 

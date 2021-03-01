@@ -16,7 +16,7 @@ const Header = (props) => {
   const renderLoggedInLinks = (
     <Nav>
       <li className="nav-item">
-        <span className="nav-link" onClick = {logout}>Sign out</span>
+        <span className="nav-link" role = "button" onClick = {logout}>Sign out</span>
       </li>
     </Nav>
   );

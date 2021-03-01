@@ -13,7 +13,6 @@ const Signin = (props) => {
   const [password, setPassword] = useState('');
   // const [error, setError] = useState('');
   const auth = useSelector((state) => state.auth);
-  const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
   // Handle the user input in the form
@@ -31,9 +30,14 @@ const Signin = (props) => {
     return <Redirect to="/" />;
   }
 
-  // when user is authencation, show spinner
+  // when user is authentication, show spinner
   if (auth.authenticating) {
-    return <Spinner />;
+    return <Spinner style = {{width: '100vw', height: '100vh'}}/>;
+  }
+
+  let signinError;
+  if (auth.signinError) {
+    signinError = <h5 className="text-danger">Sign in failed. Try again.</h5>;
   }
 
   return (
@@ -41,6 +45,7 @@ const Signin = (props) => {
       <Container>
         <Row style={{ marginTop: '50px' }}>
           <Col md={{ span: 6, offset: 3 }}>
+            {signinError ? signinError : null}
             <Form onSubmit={userLogin}>
               <Input
                 label="Email Address"

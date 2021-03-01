@@ -96,9 +96,41 @@ export const isUserLoggedIn = () => {
 // ! Sign out
 export const signout = () => {
   return async (dispatch) => {
-    localStorage.clear();
-    dispatch({ type: authConstants.LOGOUT_REQUEST });
+    dispatch({
+      type: authConstants.LOGOUT_REQUEST,
+    });
+    const token = localStorage.getItem('token');
+    axios({
+      method: 'POST',
+      url: '/admin/signout',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => {
+        console.log(response);
+        if (response.status === 200) {
+          localStorage.clear();
+          dispatch({
+            type: authConstants.LOGOUT_SUCCESS,
+          });
+        } else {
+          localStorage.clear();
+          dispatch({
+            type: authConstants.LOGOUT_FAILURE,
+            payload: { error: response.data.error },
+          });
+        }
+      })
+      .catch((error) => {
+        localStorage.clear();
+        dispatch({
+          type: authConstants.LOGOUT_FAILURE,
+          payload: { error: error },
+        });
+      });
+
+    // localStorage.clear();
+    // dispatch({ type: authConstants.LOGOUT_REQUEST });
   };
 };
-
-

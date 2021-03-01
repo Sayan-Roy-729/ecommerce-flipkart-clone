@@ -5,7 +5,11 @@ const initialState = {
   token: null,
   userId: '',
   authenticate: false,
+  signinError: null,
   authenticating: false,
+  loading: false,
+  error: null,
+  message: ''
 };
 
 // ! Authentication Reducer
@@ -29,9 +33,35 @@ const authReducer = (state = initialState, action) => {
       };
       return state;
 
-    // Logout Action
+    case authConstants.LOGIN_FAILURE:
+      return {
+        ...initialState,
+        signinError: action.payload.error,
+      }
+
+    // Logout Request Action
     case authConstants.LOGOUT_REQUEST:
-      return initialState;
+      return {
+        ...state,
+        userId: '',
+        loading: true,
+      };
+
+    // Logout Success Action
+    case authConstants.LOGOUT_SUCCESS:
+      return {
+        ...initialState,
+        userId: ''
+      };
+
+    // Logout Failure Action
+    case authConstants.LOGOUT_FAILURE:
+      return {
+        ...state,
+        userId: '',
+        error: action.payload.error,
+        loading: false
+      };
 
     default:
       return state;

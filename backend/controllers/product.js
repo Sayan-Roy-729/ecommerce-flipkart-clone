@@ -30,7 +30,7 @@ exports.createProduct = (req, res, next) => {
 
   // check productPictures validation
   if (productPictures.length <= 0) {
-    const error = new Error('productPicture is required. (Atleast one file)');
+    const error = new Error('productPicture is required. (At-least one file)');
     error.statusCode = 403;
     throw error;
   }
@@ -97,7 +97,7 @@ exports.createProduct = (req, res, next) => {
     productPictures,
     category,
     quantity,
-    createdBy: req.user._id,
+    createdBy: req.userId,
   });
 
   product.save((error, product) => {

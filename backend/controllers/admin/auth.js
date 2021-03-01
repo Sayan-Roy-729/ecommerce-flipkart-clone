@@ -76,12 +76,13 @@ exports.postSignIn = (req, res, next) => {
       // Create JSON Web Token
       const token = jwt.sign(
         {
-          _id: userData._id,
+          userId: userData._id,
           role: userData.role,
         },
         process.env.JWT_SECRET,
-        { expiresIn: '1h' }
+        { expiresIn: '1d' }
       );
+      res.cookie("token", token, { expiresIn: "1d" });
       // Send response with token
       res.status(200).json({
         userId: userData._id,
@@ -101,6 +102,8 @@ exports.postSignIn = (req, res, next) => {
 exports.postProfile = (req, res, next) => {
   res.status(200).json({ user: 'Profile' });
 };
+
+
 
 
 
@@ -132,20 +135,29 @@ exports.postTokenValidityCheck = (req, res, next) => {
   }
   // Check user is exists or not
   const userId = req.body.userId;
-
+  
   User.findById(userId)
-    .then((user) => {
-      if (!user) {
-        const error = new Error('User is not exists');
-        error.statusCode = 404;
-        throw error;
-      }
-      res.status(200).json({ message: 'User is authenticated' });
-    })
-    .catch((error) => {
-      if (!error.statusCode) {
-        error.statusCode = 500;
-      }
+  .then((user) => {
+    if (!user) {
+      const error = new Error('User is not exists');
+      error.statusCode = 404;
       throw error;
-    });
+    }
+    res.status(200).json({ message: 'User is authenticated' });
+  })
+  .catch((error) => {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    throw error;
+  });
+};
+
+
+// ! Admin Sign out
+exports.postSignout = (req, res, next) => {
+  res.clearCookie("token");
+  res.status(200).json({
+    message: "Signout successfully...!",
+  });
 };

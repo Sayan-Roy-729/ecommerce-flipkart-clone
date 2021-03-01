@@ -41,7 +41,7 @@ const Signup = (props) => {
   }
 
   if (user.loading) {
-    return <Spinner />;
+    return <Spinner style = {{width: '100vw', height: '100vh'}}/>;
   }
 
   return (
