@@ -11,6 +11,7 @@ const adminRoutes = require('./routes/admin/auth');
 const categoryRoutes = require('./routes/category');
 const productRoutes = require('./routes/product');
 const cartRoutes = require('./routes/cart');
+const initialDataRoutes = require('./routes/admin/initialData');
 
 const app = express();
 
@@ -31,6 +32,7 @@ app.use('/api/v1/admin', adminRoutes);
 app.use('/api/v1/category', categoryRoutes);
 app.use('/api/v1/product', productRoutes);
 app.use('/api/v1/user/cart', cartRoutes);
+app.use('/api/v1', initialDataRoutes);
 
 
 // error middleware

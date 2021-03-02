@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Row, Col, Container, Form } from 'react-bootstrap';
+import { Row, Col, Container, Form, Table } from 'react-bootstrap';
 
+import './style.css';
 import Layout from '../../components/layout';
 import MyModal from '../../components/UI/Modal/Modal';
 import Input from '../../components/UI/Input/index';
 import { useSelector, useDispatch } from 'react-redux';
 import { getAllCategory, addProduct } from '../../actions';
+import createCategoryList from '../../components/CategoryList/CategoryList';
+import { generatePublicUrl } from '../../urlConfig';
 
 const Products = (props) => {
   //! required data states
@@ -16,6 +19,7 @@ const Products = (props) => {
   const [categoryId, setCategoryId] = useState('');
   const [productPicture, setProductPicture] = useState([]);
   const [selectedImages, setSelectedImages] = useState([]);
+  const [productDetails, setProductDetails] = useState(null);
 
   const [showSpinner, setShowSpinner] = useState(false);
   let addProductStatus;
@@ -33,6 +37,7 @@ const Products = (props) => {
 
   // ! for modal show, hide
   const [show, setShow] = useState(false);
+  const [productDetailModal, setProductDetailModal] = useState(false);
 
   // !handle form submit
   const handleClose = () => {
@@ -67,17 +72,6 @@ const Products = (props) => {
   // ! open modal
   const handleShow = () => setShow(true);
 
-  // ! create category list
-  const createCategoryList = (categories, options = []) => {
-    for (let category of categories) {
-      options.push({ value: category._id, name: category.name });
-      if (category.children.length > 0) {
-        createCategoryList(category.children, options);
-      }
-    }
-    return options;
-  };
-
   // ! product picture file handler
   const productPicturesHandler = (event) => {
     setProductPicture([...productPicture, ...event.target.files]);
@@ -92,20 +86,43 @@ const Products = (props) => {
     }
   };
 
-  return (
-    <Layout sidebar>
-      <Container>
-        <Row>
-          <Col md={12}>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <h3>Products</h3>
+  const renderProducts = () => {
+    return (
+      <Table style={{ fontSize: 12 }} responsive="sm">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Category</th>
+          </tr>
+        </thead>
+        <tbody>
+          {product.products.length > 0
+            ? product.products.map((product) => {
+                return (
+                  <tr
+                    key={product._id}
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => showProductDetailModal(product)}
+                  >
+                    <td>1</td>
+                    <td>{product.name}</td>
+                    <td>{product.price}</td>
+                    <td>{product.quantity}</td>
+                    <td>{product.category.name}</td>
+                  </tr>
+                );
+              })
+            : null}
+        </tbody>
+      </Table>
+    );
+  };
 
-              <button onClick={handleShow}>Add</button>
-            </div>
-          </Col>
-        </Row>
-      </Container>
-
+  const renderAddProductModal = () => {
+    return (
       <MyModal
         show={show}
         onHide={handleClose}
@@ -194,12 +211,114 @@ const Products = (props) => {
             className="form-control-file"
             type="file"
             name="productPicture"
+            accept="image/*"
             id=""
             onChange={productPicturesHandler}
             multiple
           />
         </form>
       </MyModal>
+    );
+  };
+
+  const handleCloseProductDetailsModal = () => {
+    setProductDetailModal(false);
+  };
+
+  const showProductDetailModal = (product) => {
+    setProductDetails(product);
+    setProductDetailModal(true);
+  };
+
+  const renderProductDetailsModal = () => {
+    if (!productDetails) {
+      return;
+    }
+    return (
+      <MyModal
+        show={productDetailModal}
+        onHide={handleCloseProductDetailsModal}
+        modalTitle="Product Details"
+        onClick={handleCloseProductDetailsModal}
+        size="lg"
+      >
+        <Row>
+          <Col md={6}>
+            <label className="key" htmlFor="">
+              Name
+            </label>
+            <p className="value">{productDetails.name}</p>
+          </Col>
+          <Col md={6}>
+            <label className="key" htmlFor="">
+              Price
+            </label>
+            <p className="value">{productDetails.price}</p>
+          </Col>
+        </Row>
+        <Row>
+          <Col md={6}>
+            <label className="key" htmlFor="">
+              Quantity
+            </label>
+            <p className="value">{productDetails.quantity}</p>
+          </Col>
+          <Col md={6}>
+            <label className="key" htmlFor="">
+              Category
+            </label>
+            <p className="value">{productDetails.category.name}</p>
+          </Col>
+        </Row>
+        <Row>
+          <Col md={12}>
+            <label className="key" htmlFor="">
+              Description
+            </label>
+            <p className="value">{productDetails.description}</p>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <label className="key" htmlFor="">
+              Product Pictures
+            </label>
+            <div style={{ display: 'flex' }}>
+              {productDetails.productPictures.map((picture) => {
+                return (
+                  <div key={picture._id} className="productImgContainer">
+                    <img
+                      src={generatePublicUrl(picture.img)}
+                      alt={picture._id}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          </Col>
+        </Row>
+      </MyModal>
+    );
+  };
+
+  return (
+    <Layout sidebar>
+      <Container>
+        <Row>
+          <Col md={12}>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <h3>Products</h3>
+              <button onClick={handleShow}>Add</button>
+            </div>
+          </Col>
+        </Row>
+        <Row>
+          <Col>{renderProducts()}</Col>
+        </Row>
+      </Container>
+
+      {renderAddProductModal()}
+      {renderProductDetailsModal()}
     </Layout>
   );
 };

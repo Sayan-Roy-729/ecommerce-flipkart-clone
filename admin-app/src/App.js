@@ -7,7 +7,7 @@ import Home from './containers/Home/home';
 import Signin from './containers/Signin/signin';
 import Signup from './containers/Signup/signup';
 import PrivateRoute from './components/HOC/PrivateRoute';
-import { isUserLoggedIn } from './actions/index';
+import { isUserLoggedIn, getInitialData } from './actions/index';
 import Products from './containers/Products/Products';
 import Orders from './containers/Orders/Orders';
 import Category from './containers/Category/category';
@@ -21,6 +21,7 @@ function App() {
     if (!auth.authenticate) {
       dispatch(isUserLoggedIn());
     }
+    dispatch(getInitialData());
   }, [auth.authenticate, dispatch]);
 
   return (

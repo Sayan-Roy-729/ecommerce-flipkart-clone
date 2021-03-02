@@ -1,49 +1,69 @@
+const bcrypt = require('bcrypt');
+const shortid = require('shortid');
+
 const User = require('../../models/user');
 const jwt = require('jsonwebtoken');
 
 // ! Admin Sign Up (Create new user)
 exports.postSignUp = (req, res, next) => {
+  const firstName = req.body.firstName;
+  const lastName = req.body.lastName;
+  const email = req.body.email;
+  const password = req.body.password;
+  let userNotExists = true;
+
   // Check user exists or not
   User.findOne({ email: req.body.email })
     .then((user) => {
       // if user exists, then throw error
       if (user) {
+        userNotExists = false;
         const error = new Error('User already exists!');
         error.statusCode = 400;
         throw error;
       }
-      // if user not exists, then fetch data from the request
-      const firstName = req.body.firstName;
-      const lastName = req.body.lastName;
-      const email = req.body.email;
-      const password = req.body.password;
-
-      const _user = new User({
-        firstName: firstName,
-        lastName: lastName,
-        email: email,
-        password: password,
-        userName: Math.random().toString(),
-        role: 'admin',
-      });
-
-      // save the user into database
-      return _user.save();
     })
-    .then((result) => {
-      // Response for creating user successfullt
-      res.status(201).json({
-        message: 'Admin created successfully!',
-        user: result,
-      });
-    })
-    .catch((err) => {
-      // Handle with errors
-      if (!err.statusCode) {
-        err.statusCode = 500;
+    .catch((error) => {
+      if (!error.statusCode) {
+        error.statusCode = 500;
       }
-      next(err);
+      throw error;
     });
+
+  if (userNotExists) {
+    bcrypt
+      .hash(password, 14)
+      .then((hashedPassword) => {
+        const _user = new User({
+          firstName: firstName,
+          lastName: lastName,
+          email: email,
+          hash_password: hashedPassword,
+          userName: shortid.generate(),
+          role: 'admin',
+        });
+        // save the user into database
+        return _user.save();
+      })
+      .then((result) => {
+        // Response for creating user successfully
+        res.status(201).json({
+          message: 'Admin created successfully!',
+          user: result,
+        });
+      })
+      .catch((err) => {
+        // Handle with errors
+        if (!err.statusCode) {
+          err.statusCode = 500;
+        }
+        next(err);
+      });
+  } else {
+    const error = new Error('User already exists');
+    error.statusCode = 400;
+    throw error;
+  }
 };
 
 // ! Admin sign in
@@ -82,7 +102,7 @@ exports.postSignIn = (req, res, next) => {
         process.env.JWT_SECRET,
         { expiresIn: '1d' }
       );
-      res.cookie("token", token, { expiresIn: "1d" });
+      res.cookie('token', token, { expiresIn: '1d' });
       // Send response with token
       res.status(200).json({
         userId: userData._id,
@@ -102,10 +122,6 @@ exports.postSignIn = (req, res, next) => {
 exports.postProfile = (req, res, next) => {
   res.status(200).json({ user: 'Profile' });
 };
-
-
-
-
 
 // ! Token Validity Check
 exports.postTokenValidityCheck = (req, res, next) => {
@@ -135,29 +151,28 @@ exports.postTokenValidityCheck = (req, res, next) => {
   }
   // Check user is exists or not
   const userId = req.body.userId;
-  
-  User.findById(userId)
-  .then((user) => {
-    if (!user) {
-      const error = new Error('User is not exists');
-      error.statusCode = 404;
-      throw error;
-    }
-    res.status(200).json({ message: 'User is authenticated' });
-  })
-  .catch((error) => {
-    if (!error.statusCode) {
-      error.statusCode = 500;
-    }
-    throw error;
-  });
-};
 
+  User.findById(userId)
+    .then((user) => {
+      if (!user) {
+        const error = new Error('User is not exists');
+        error.statusCode = 404;
+        throw error;
+      }
+      res.status(200).json({ message: 'User is authenticated' });
+    })
+    .catch((error) => {
+      if (!error.statusCode) {
+        error.statusCode = 500;
+      }
+      throw error;
+    });
+};
 
 // ! Admin Sign out
 exports.postSignout = (req, res, next) => {
-  res.clearCookie("token");
+  res.clearCookie('token');
   res.status(200).json({
-    message: "Signout successfully...!",
+    message: 'Signout successfully...!',
   });
 };

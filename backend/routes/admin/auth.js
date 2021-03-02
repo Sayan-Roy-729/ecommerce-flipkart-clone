@@ -28,6 +28,6 @@ router.post(
 router.post('/tokenvalidation', authController.postTokenValidityCheck);
 
 // ! Admin Sign out => /api/v1/admin/signout
-router.post('signout', authController.postSignout);
+router.post('/signout', authController.postSignout);
 
 module.exports = router;

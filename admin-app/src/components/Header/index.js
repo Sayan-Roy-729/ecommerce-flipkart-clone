@@ -43,6 +43,7 @@ const Header = (props) => {
       expand="lg"
       bg="dark"
       variant="dark"
+      fixed = 'top'
       style={{ zIndex: 1 }}
     >
       <Container fluid>

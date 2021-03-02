@@ -53,9 +53,9 @@ const schema = Schema(
   { timestamps: true }
 );
 
-schema.virtual('password').set(function(password) {
-  this.hash_password = bcrypt.hashSync(password, 14);
-});
+// schema.virtual('password').set(function(password) {
+//   this.hash_password = bcrypt.hashSync(password, 14);
+// });
 
 // schema.methods = {
 //   authenticate: function(password){
@@ -67,8 +67,9 @@ schema.virtual('password').set(function(password) {
 //   return `${this.fullName} ${this.lastName}`;
 // });
 
-schema.methods.authenticate = (password, hash_password) => {
-  return bcrypt.compareSync(password, hash_password);
+schema.methods.authenticate = async (password, hash_password) => {
+  // return bcrypt.compareSync(password, hash_password);
+  return await bcrypt.compare(password, hash_password);
 };
 
 schema.methods.fullName = function(firstName, lastName){
