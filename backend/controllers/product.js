@@ -3,6 +3,7 @@ const fs = require('fs');
 const slugify = require('slugify');
 
 const Product = require('../models/product');
+const Category = require('../models/category');
 const { deleteFile } = require('../functions/deleteFile');
 const { moveFile } = require('../functions/moveFile');
 
@@ -16,7 +17,7 @@ const { moveFile } = require('../functions/moveFile');
 //   }
 // };
 
-// ! Cheate new product
+// ! Create new product
 exports.createProduct = (req, res, next) => {
   const { name, price, description, category, quantity } = req.body;
   let productPictures = [];
@@ -106,4 +107,55 @@ exports.createProduct = (req, res, next) => {
       res.status(201).json({ product });
     }
   });
+};
+
+// ! Convert 1st letter to uppercase
+const capitalizeFirstLetter = (string) => {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+};
+
+// const filterProductsByPrice = (products, price) => {
+//   return products.filter((product) => product.price <= price);
+// };
+
+// ! Get all Products [GET]
+exports.getProductsBySlug = (req, res, next) => {
+  let { slug } = req.params;
+  slug = capitalizeFirstLetter(slug);
+
+  Category.findOne({ slug: slug })
+    .select('_id')
+    .exec((error, category) => {
+      if (error) {
+        return res.status(400).json({ error });
+      }
+      if (category) {
+        Product.find({ category: category._id }).exec((error, products) => {
+          if (error) {
+            return res.status(404).json({ error });
+          }
+
+          if (products.length > 0) {
+            res.status(200).json({
+              products,
+              productsByPrice: {
+                under5k: products.filter((product) => product.price <= 5000),
+                under10k: products.filter(
+                  (product) => product.price > 5000 && product.price <= 10000
+                ),
+                under15k: products.filter(
+                  (product) => product.price > 10000 && product.price <= 15000
+                ),
+                under20k: products.filter(
+                  (product) => product.price > 15000 && product.price <= 20000
+                ),
+                under30k: products.filter(
+                  (product) => product.price > 20000 && product.price <= 30000
+                ),
+              },
+            });
+          }
+        });
+      }
+    });
 };

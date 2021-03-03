@@ -32,10 +32,11 @@
 
 .menuHeader > ul > li > ul {
   position: absolute;
-  background-color: red;
+  background-color: #fff;
   left: 0;
   right: 0;
   display: none;
+  border: 1px solid #cecece
 }
 
 .menuHeader > ul > li:hover ul {
@@ -44,6 +45,7 @@
 
 .menuHeader > ul > li > ul > li {
   margin: 0 20px;
+  min-width: 150px;
 }
 
 .menuHeader > ul > li > ul > li {
@@ -53,9 +55,14 @@
 .menuHeader > ul > li > ul > li > a {
   font-weight: bold;
   display: block;
+  font-size: 12px;
+  text-decoration: none;
 } 
 
 .menuHeader > ul > li > ul > li  a {
   padding: 3px 0;
   display: block;
+  font-size: 12px;
+  text-decoration: none;
+  color: #707070;
 }

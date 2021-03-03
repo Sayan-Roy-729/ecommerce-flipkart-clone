@@ -14,6 +14,9 @@ const categorySchema = Schema(
       required: true,
       unique: true,
     },
+    type: {
+      type: String,
+    },
     categoryImage: {
       type: String,
     },

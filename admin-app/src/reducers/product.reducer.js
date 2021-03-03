@@ -15,6 +15,7 @@ const productReducer = (state = initialState, action) => {
         loading: true,
       };
     case productConstants.ADD_NEW_PRODUCT_SUCCESS:
+      console.log('[products.reducer.js]', action.payload.product);
       return {
         ...state,
         loading: false,

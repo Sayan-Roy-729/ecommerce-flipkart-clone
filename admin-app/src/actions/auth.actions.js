@@ -3,7 +3,6 @@ import axios from '../helpers/axios';
 
 // ! Login
 export const login = (user) => {
-  console.log('[User]', user);
   return async (dispatch) => {
     // request action creator (api call)
     let token;

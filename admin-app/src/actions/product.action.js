@@ -13,8 +13,6 @@ export const addProduct = (form) => {
       });
     }
 
-    console.log(form);
-
     const res = await axios({
       method: 'POST',
       url: 'product/create',

@@ -62,7 +62,6 @@ function createCategories(categories, parentId = null) {
       children: createCategories(categories, cate._id),
     });
   }
-
   return categoryList;
 }
 
@@ -76,4 +75,40 @@ exports.getCategories = (req, res, next) => {
       res.status(200).json({ categoryList });
     }
   });
+};
+
+exports.updateCategories = async (req, res, next) => {
+  console.log('category.js', req);
+  const { _id, name, parentId, type } = req.body;
+  const updatedCategories = [];
+  if (name instanceof Array) {
+    for (let i = 0; i < name.length; i++) {
+      const category = {
+        name: name[i],
+        type: type[i],
+      };
+      if (parentId == '') {
+        category.parentId = parentId[i];
+      }
+      const updatedCategory = await Category.findOneAndUpdate(
+        { _id },
+        category,
+        { new: true }
+      );
+      updatedCategories.push(updatedCategory);
+      return res.status(201).json({ updatedCategories });
+    }
+  } else {
+    const category = {
+      name,
+      type,
+    };
+    if (parentId !== '') {
+      category.parentId = parentId;
+    }
+    const updatedCategory = await Category.findOneAndUpdate({ _id }, category, {
+      new: true,
+    });
+    return res.status(201).json({ updatedCategory });
+  }
 };

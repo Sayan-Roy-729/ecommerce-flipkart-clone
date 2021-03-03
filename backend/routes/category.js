@@ -34,4 +34,11 @@ router.post(
 // ! api/v1/category/getcategory [GET]
 router.get('/getcategory', categoryControllers.getCategories);
 
+// ! api/v1/category/update [POST]
+router.post(
+  '/update',
+  upload.array('categoryImage'),
+  categoryControllers.updateCategories
+);
+
 module.exports = router;

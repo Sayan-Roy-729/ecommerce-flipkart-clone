@@ -23,7 +23,7 @@ const upload = multer({
   storage,
 });
 
-// ! /api/v1/category/create [POST]
+// ! /api/v1/product/create [POST]
 router.post(
   '/create',
   authentication.requireSignin,
@@ -32,7 +32,9 @@ router.post(
   productController.createProduct
 );
 
-// api/v1/category/getcategory [GET]
-// router.get('/getcategory', categoryControllers.getCategories);
+// ! /api/v1/product/:slug [GET]
+router.get('/:slug', productController.getProductsBySlug);
+
+// router.get('/category/getcategory', productController.getCategory);
 
 module.exports = router;

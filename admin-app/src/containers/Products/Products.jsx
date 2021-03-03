@@ -35,6 +35,8 @@ const Products = (props) => {
   const category = useSelector((state) => state.category);
   const product = useSelector((state) => state.product);
 
+  console.log('Products.jsx', product);
+
   // ! for modal show, hide
   const [show, setShow] = useState(false);
   const [productDetailModal, setProductDetailModal] = useState(false);
@@ -101,6 +103,7 @@ const Products = (props) => {
         <tbody>
           {product.products.length > 0
             ? product.products.map((product) => {
+              console.log('[Products.jsx]', product);
                 return (
                   <tr
                     key={product._id}
